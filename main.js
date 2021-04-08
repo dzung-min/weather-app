@@ -3,14 +3,11 @@
  * @author Dzung Nguyen <dzung_min@yahoo.com>
  */
 
-window.onload = () => {
-  navigator.geolocation.getCurrentPosition(async (location) => {
-    const lat = location.coords.latitude;
-    const lon = location.coords.longitude;
-    const weatherData = await getWeather(`${lat},${lon}`);
-    displayData(weatherData);
-  });
-};
+window.addEventListener("load", async () => {
+  const city = await getLocation();
+  const weatherData = await getWeather(city);
+  displayData(weatherData);
+});
 
 document
   .getElementById("search-form")
@@ -65,4 +62,15 @@ function displayData(data) {
   ).innerHTML = `Feels like ${feelslike} &#176;C`;
   document.getElementById("humidity").innerHTML = `Humidity ${humidity} &#37;`;
   document.getElementById("uv-index").innerHTML = `UV index ${uv_index}`;
+}
+
+/**
+ * Perforn loocation look up throught IP address
+ * will give inaccureate data if user use VPN.
+ * @returns city name
+ */
+async function getLocation() {
+  const respone = await fetch("https://extreme-ip-lookup.com/json/");
+  const data = await respone.json();
+  return data.city;
 }
